@@ -8,7 +8,7 @@
 
 ## 在线演示
 
-https://YOLO-app.streamlit.app/
+https://yolo-live.streamlit.app/
 
 ## 功能特性
 

@@ -8,7 +8,7 @@ A comprehensive Streamlit web application for object detection on images, videos
 
 ## Live Demo
 
-https://YOLO-app.streamlit.app/
+https://yolo-live.streamlit.app/
 
 ## Features
 
