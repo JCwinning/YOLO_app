@@ -1,0 +1,18 @@
+[project]
+name = "yolo-app"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dashscope>=1.17.0",
+    "numpy>=2.3.3",
+    "opencv-python>=4.11.0.86",
+    "openai>=1.0.0",
+    "pillow>=11.3.0",
+    "streamlit>=1.50.0",
+    "torch>=2.2",
+    "torchaudio>=2.2",
+    "torchvision>=0.17",
+    "ultralytics>=8.3.0",
+]
