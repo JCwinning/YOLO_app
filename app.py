@@ -636,9 +636,16 @@ with st.sidebar:
         device_display = get_translation("gemini_device")
         st.info(get_translation("gemini_device_info"))
     else:
+        # Detect available device for YOLO models
         if torch.backends.mps.is_available():
             device = "mps"
             device_display = "MPS (Apple Silicon)"
+        elif torch.cuda.is_available():
+            device = "cuda"
+            device_display = "CUDA (GPU)"
+        else:
+            device = "cpu"
+            device_display = "CPU"
         st.info(get_translation("detected_device", device_display=device_display))
 
     # Start detection button
