@@ -264,7 +264,7 @@ Generate a clean, high-contrast annotated image showing YOLO-style detections wi
 
 
 def process_gemini_image(image, confidence=0.5):
-    """Process image using Gemini 2.5 Flash Image model for object detection with image generation."""
+    """Process image using Gemini 3 pro Image model for object detection with image generation."""
     temp_image_path = None
     try:
         # Get API key from session state
@@ -308,7 +308,7 @@ Generate a clean, high-contrast annotated image showing YOLO-style detections wi
                 image_base64 = base64.b64encode(image_bytes).decode()
 
             payload = {
-                "model": "google/gemini-2.5-flash-image",
+                "model": "google/gemini-3-pro-image-preview",
                 "messages": [
                     {
                         "role": "user",
@@ -355,7 +355,7 @@ Generate a clean, high-contrast annotated image showing YOLO-style detections wi
                                     if message.get("content"):
                                         st.session_state.last_gemini_response = message["content"]
 
-                                    st.success("✅ Gemini 2.5 Flash Image generated annotated image successfully!")
+                                    st.success("✅ Gemini 3 pro Image generated annotated image successfully!")
                                     return annotated_image
                             else:
                                 # Download from HTTP URL
@@ -368,7 +368,7 @@ Generate a clean, high-contrast annotated image showing YOLO-style detections wi
                                     if message.get("content"):
                                         st.session_state.last_gemini_response = message["content"]
 
-                                    st.success("✅ Gemini 2.5 Flash Image generated annotated image successfully!")
+                                    st.success("✅ Gemini 3 pro Image generated annotated image successfully!")
                                     return annotated_image
 
                 # If no image generated, check for text analysis as fallback
@@ -453,7 +453,26 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# Inject CSS for image sizing
+st.markdown(
+    """
+    <style>
+    .block-container {
+        padding-top: 1.4rem !important;
+    }
+    [data-testid="stImage"] img {
+        max-height: 60vh !important;
+        object-fit: contain !important;
+        width: auto !important;
+        margin: 0 auto;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # Language switcher in top right corner
+st.markdown('<div style="height: 1.4rem;"></div>', unsafe_allow_html=True)
 col1, col2, col3 = st.columns([6, 1, 1])
 with col3:
     if st.button("EN" if st.session_state.language == "zh" else "中文", key="language_switcher"):
@@ -495,7 +514,7 @@ with st.sidebar:
             ext = os.path.splitext(uploaded_file.name)[1].lower()
             if ext in [".jpg", ".jpeg", ".png"]:
                 if st.session_state.get("uploaded_image_bytes") != uploaded_bytes:
-                    new_image = Image.open(BytesIO(uploaded_bytes)).copy()
+                    new_image = Image.open(BytesIO(uploaded_bytes)).convert('RGB').copy()
                     st.session_state["current_image"] = new_image
                     st.session_state["current_video"] = None
                     st.session_state["uploaded_image_bytes"] = uploaded_bytes
@@ -535,7 +554,7 @@ with st.sidebar:
             try:
                 response = requests.get(url)
                 response.raise_for_status()
-                new_image = Image.open(BytesIO(response.content)).copy()
+                new_image = Image.open(BytesIO(response.content)).convert('RGB').copy()
                 st.session_state["current_image"] = new_image
                 st.session_state["current_video"] = None
                 st.session_state["uploaded_image_bytes"] = None
@@ -558,12 +577,12 @@ with st.sidebar:
     # Model Settings
     st.header(get_translation("model_settings"))
 
-    # Prepare model options with Qwen-Image-Edit and Gemini 2.5 Flash Image
+    # Prepare model options with Qwen-Image-Edit and Gemini 3 pro Image
     yolo_models = ["yolo11n.pt", "yolo11s.pt", "yolo11m.pt", "yolo11l.pt", "yolo11x.pt"]
     additional_models = []
     if dashscope_available:
         additional_models.append("qwen-image-edit")
-    additional_models.append("gemini-2.5-flash-image")
+    additional_models.append("gemini-3-pro-image")
 
     if additional_models:
         model_options = yolo_models + additional_models
@@ -582,12 +601,12 @@ with st.sidebar:
     # Warn if cloud models are selected with video input
     if model_name == "qwen-image-edit" and st.session_state.get("current_video"):
         st.warning(get_translation("qwen_video_warning"))
-    elif model_name == "gemini-2.5-flash-image" and st.session_state.get("current_video"):
+    elif model_name == "gemini-3-pro-image" and st.session_state.get("current_video"):
         st.warning(get_translation("gemini_video_warning"))
     confidence = st.slider(get_translation("confidence_threshold"), 0.1, 0.9, 0.5, 0.05)
 
     # API Key configuration for cloud models
-    if model_name in ["qwen-image-edit", "gemini-2.5-flash-image"]:
+    if model_name in ["qwen-image-edit", "gemini-3-pro-image"]:
         st.subheader(get_translation("api_configuration"))
 
         if model_name == "qwen-image-edit":
@@ -597,7 +616,7 @@ with st.sidebar:
                 st.session_state.dashscope_api_key = api_key
                 st.success(get_translation("api_key_saved"))
 
-        elif model_name == "gemini-2.5-flash-image":
+        elif model_name == "gemini-3-pro-image":
             st.info(get_translation("gemini_api_info"))
             openrouter_key = st.text_input(
                 get_translation("openrouter_key"),
@@ -613,17 +632,16 @@ with st.sidebar:
     if model_name == "qwen-image-edit":
         device_display = get_translation("qwen_device")
         st.info(get_translation("qwen_device_info"))
-    elif model_name == "gemini-2.5-flash-image":
+    elif model_name == "gemini-3-pro-image":
         device_display = get_translation("gemini_device")
         st.info(get_translation("gemini_device_info"))
     else:
         if torch.backends.mps.is_available():
             device = "mps"
             device_display = "MPS (Apple Silicon)"
-        else:
-            device = "cpu"
-            device_display = "CPU"
         st.info(get_translation("detected_device", device_display=device_display))
+
+    # Start detection button
 
     # Start detection button
     if st.button(get_translation("start_detection")):
@@ -633,7 +651,7 @@ with st.sidebar:
 
         if current_image is None and current_video is None and not camera_active:
             st.error(get_translation("upload_error"))
-        elif model_name in ["qwen-image-edit", "gemini-2.5-flash-image"] and current_video is not None:
+        elif model_name in ["qwen-image-edit", "gemini-3-pro-image"] and current_video is not None:
             model_display = model_name.replace("-", " ").title()
             st.error(get_translation("qwen_image_only", model_display=model_display))
         elif camera_active:
@@ -649,7 +667,7 @@ with st.sidebar:
                             # For Qwen, we don't have structured results, so we'll set a flag
                             st.session_state.qwen_processed = True
                             st.session_state.results = None
-                elif model_name == "gemini-2.5-flash-image":
+                elif model_name == "gemini-3-pro-image":
                         processed_img = process_gemini_image(
                             st.session_state.camera_frame, confidence
                         )
@@ -765,7 +783,7 @@ model.predict(
                         st.session_state.qwen_processed = True
                         st.session_state.results = None
                         st.session_state.gemini_processed = False
-            elif model_name == "gemini-2.5-flash-image":
+            elif model_name == "gemini-3-pro-image":
                     processed_img = process_gemini_image(current_image, confidence)
                     if processed_img:
                         st.session_state.annotated_img = np.array(processed_img)
@@ -957,9 +975,10 @@ elif st.session_state.get("camera_active", False):
     camera_image = st.camera_input(get_translation("take_photo"))
 
     if camera_image:
-        # Convert the uploaded image to PIL Image
-        pil_image = Image.open(camera_image)
+        # Convert the uploaded image to PIL Image and ensure RGB mode
+        pil_image = Image.open(camera_image).convert('RGB')
         st.session_state.camera_frame = pil_image
+        st.success(get_translation("photo_captured"))
         st.success(get_translation("photo_captured"))
         st.image(pil_image, use_container_width=True, caption=get_translation("captured_photo"))
     else:
