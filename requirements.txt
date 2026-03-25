@@ -305,7 +305,7 @@ openai==1.65.3
 openai-whisper==20250625
 opencc-python-reimplemented==0.1.7
 
-opencv-python-headless==4.12.0.88
+opencv-python==4.12.0.88
 openinference-instrumentation==0.1.23
 openinference-instrumentation-smolagents==0.1.6
 openinference-semantic-conventions==0.1.14
