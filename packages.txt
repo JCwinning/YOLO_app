@@ -1,1 +1,0 @@
-# Removed apt dependencies. Using opencv-python-headless instead to avoid Streamlit Cloud APT conflict.
