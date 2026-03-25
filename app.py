@@ -191,13 +191,12 @@ def process_qwen_image_edit(image, confidence=0.5):
         prompt = f"""Create a YOLO-style annotated version of the given image.
 Instructions:
 1.Detect all objects in the image.
-2.Draw bounding boxes around each detected object.
+2.Draw distinguishable colors bounding boxes around each detected object.
 3.Display class labels at the top of each bounding box.
 4.Add confidence scores next to each label, formatted as a decimal between 0.00 and 1.00.
 5.Apply a confidence threshold of {confidence} — only show detections above this threshold.
-6.Use distinct, easily distinguishable colors for different object classes.
-7.Ensure that bounding boxes, labels, and confidence scores are clearly visible and readable, regardless of background.
-8.Output: A new image with all annotations clearly drawn and labeled.
+6.Ensure that bounding boxes, labels, and confidence scores are clearly visible and readable, regardless of background.
+7.Output: A new image with all annotations clearly drawn and labeled.
 Goal:
 Generate a clean, high-contrast annotated image showing YOLO-style detections with readable text and visually distinct bounding boxes for each class."""
 
@@ -282,13 +281,12 @@ def process_gemini_image(image, confidence=0.5):
         prompt = f"""Create a YOLO-style annotated version of the given image.
 Instructions:
 1.Detect all objects in the image.
-2.Draw bounding boxes around each detected object.
+2.Draw distinguishable colors bounding boxes around each detected object.
 3.Display class labels at the top of each bounding box.
 4.Add confidence scores next to each label, formatted as a decimal between 0.00 and 1.00.
 5.Apply a confidence threshold of {confidence} — only show detections above this threshold.
-6.Use distinct, easily distinguishable colors for different object classes.
-7.Ensure that bounding boxes, labels, and confidence scores are clearly visible and readable, regardless of background.
-8.Output: A new image with all annotations clearly drawn and labeled.
+6.Ensure that bounding boxes, labels, and confidence scores are clearly visible and readable, regardless of background.
+7.Output: A new image with all annotations clearly drawn and labeled.
 Goal:
 Generate a clean, high-contrast annotated image showing YOLO-style detections with readable text and visually distinct bounding boxes for each class."""
 
